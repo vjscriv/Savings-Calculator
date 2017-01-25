@@ -1,5 +1,7 @@
 /*Validates fields on the savings page*/
 function validateFields(){
+	document.getElementById("transactionError").innerHTML = "";
+	document.getElementById("amountError").innerHTML ="";
 	var numTransactions = document.forms["calculateCost"]["numTransactions"].value;
 	var amountProcessed = document.forms["calculateCost"]["amountProcessed"].value;
 	var validTransactions;
@@ -25,6 +27,8 @@ function validateFields(){
 } 
 /*Validates fields for widget that sends data to savings page*/
 function validateFieldsWidget(){
+	document.getElementById("transactionError").innerHTML = "";
+	document.getElementById("amountError").innerHTML ="";
 	var numTransactions = document.forms["calculateCost"]["numTransactions"].value;
 	var amountProcessed = document.forms["calculateCost"]["amountProcessed"].value;
 	var typeTransactions = document.forms["calculateCost"]["typeTransactions"].value;
@@ -56,33 +60,35 @@ function widgetInfo(){
 	var widgetArray = new Array();
 	widgetArray = document.cookie.split(":");
 	var widgInd = widgetArray.indexOf("spWidgetStart");
-	var numTransactions = widgetArray[widgInd +1]
+	var numTransactions = widgetArray[widgInd +1];
 	var amountProcessed = widgetArray[widgInd + 2];
 	var typeTransactions = widgetArray[widgInd + 3];
-	document.getElementById("numTransactions").value = numTransactions;
-	document.getElementById("amountProcessed").value = amountProcessed;
-	var costSP;
-	var costPayPal;
-	var costSquare;
-	var costStripe;
-	var costAuthorize;
-	var costBrainTree;
-	if (typeTransactions == "swiped"){
-		costSP = Math.round(0.1 * numTransactions + 0.019 * amountProcessed + 30);
-		costSquare = Math.round(0.0275 * amountProcessed);
-		costStripe = Math.round(0.3 * numTransactions + 0.029 * amountProcessed);
-		costAuthorize = Math.round(0.3 * numTransactions + 0.029 * amountProcessed + 25);
-		costPayPal = Math.round(0.3 * numTransactions + 0.027 * amountProcessed);
+	if(numTransactions>0){
+		document.getElementById("numTransactions").value = numTransactions;
+		document.getElementById("amountProcessed").value = amountProcessed;
+		var costSP;
+		var costPayPal;
+		var costSquare;
+		var costStripe;
+		var costAuthorize;
+		var costBrainTree;
+		if (typeTransactions == "swiped"){
+			costSP = Math.round(0.1 * numTransactions + 0.019 * amountProcessed + 30);
+			costSquare = Math.round(0.0275 * amountProcessed);
+			costStripe = Math.round(0.3 * numTransactions + 0.029 * amountProcessed);
+			costAuthorize = Math.round(0.3 * numTransactions + 0.029 * amountProcessed + 25);
+			costPayPal = Math.round(0.3 * numTransactions + 0.027 * amountProcessed);
+		}
+		else if(typeTransactions == "keyed"){
+			costSP = Math.round(0.3 * numTransactions + 0.0275 * amountProcessed + 30);
+			costSquare = Math.round(0.035 * amountProcessed + 0.15 * numTransactions);
+			costStripe = Math.round(0.3 * numTransactions + 0.029 * amountProcessed);
+			costAuthorize = Math.round(0.3 * numTransactions + 0.029 * amountProcessed + 25);
+			costPayPal = Math.round(0.15 * numTransactions + 0.035 * amountProcessed);
+			costBrainTree = Math.round(0.3 * numTransactions + 0.029 * amountProcessed);
+		}
+		calculateSavings(costSP, costSquare, costStripe, costAuthorize, costPayPal, costBrainTree);
 	}
-	else if(typeTransactions == "keyed"){
-		costSP = Math.round(0.3 * numTransactions + 0.0275 * amountProcessed + 30);
-		costSquare = Math.round(0.035 * amountProcessed + 0.15 * numTransactions);
-		costStripe = Math.round(0.3 * numTransactions + 0.029 * amountProcessed);
-		costAuthorize = Math.round(0.3 * numTransactions + 0.029 * amountProcessed + 25);
-		costPayPal = Math.round(0.15 * numTransactions + 0.035 * amountProcessed);
-		costBrainTree = Math.round(0.3 * numTransactions + 0.029 * amountProcessed);
-	}
-	calculateSavings(costSP, costSquare, costStripe, costAuthorize, costPayPal, costBrainTree);
 }
 
 function calculateCost(numTransactions, amountProcessed){
